@@ -343,5 +343,103 @@
     "name": "Patrick Ta Beauty",
     "file": "/brand-logos/patrick-ta-beauty.svg",
     "source": "https://patrickta.com/cdn/shop/files/logo.svg?v=1783568458&width=240"
+  },
+  {
+    "name": "Laura Geller Beauty",
+    "file": "/brand-logos/laura-geller-beauty.svg",
+    "source": "https://www.laurageller.com/cdn/shop/files/LG-stacked-logo-black-trademarked.svg?v=1756235736&width=600"
+  },
+  {
+    "name": "Dr. Dennis Gross",
+    "file": "/brand-logos/dr-dennis-gross.png",
+    "source": "https://www.drdennisgross.com/on/demandware.static/Sites-ddg_us-Site/-/default/dwfa21d30b/images/icons/logo.png"
+  },
+  {
+    "name": "Shiseido",
+    "file": "/brand-logos/shiseido.svg",
+    "source": "https://www.shiseido.com/on/demandware.static/Sites-shiseido_us-Site/-/en_US/v1791450520320/images/icons/logo.svg"
+  },
+  {
+    "name": "Summer Fridays",
+    "file": "/brand-logos/summer-fridays.svg",
+    "source": "https://summerfridays.com/#logo-mobile"
+  },
+  {
+    "name": "Rare Beauty",
+    "file": "/brand-logos/rare-beauty.svg",
+    "source": "https://www.rarebeauty.com/cdn/shop/t/127/assets/sprite-icon-63447b8e.svg?v=172542823338762394711789507469",
+    "note": "Official sprite, viewBox restricted to the wordmark position specified by icon--logo CSS."
+  },
+  {
+    "name": "NUDESTIX",
+    "file": "/brand-logos/nudestix.png",
+    "source": "https://www.nudestix.com/cdn/shop/files/Nudestix-logo.png?v=1753415703&width=600"
+  },
+  {
+    "name": "NEST New York",
+    "file": "/brand-logos/nest-new-york.png",
+    "source": "https://www.nestnewyork.com/cdn/shop/files/nestny_site_logo_medium.png?v=1689686203"
+  },
+  {
+    "name": "Silk'n",
+    "file": "/brand-logos/silk-n.svg",
+    "source": "https://www.silkn.com/on/demandware.static/Sites-skus-Site/-/default/dw9c4f5269/dist/images/icons.svg"
+  },
+  {
+    "name": "Skylar",
+    "file": "/brand-logos/skylar.svg",
+    "source": "https://skylar.com/svgs/logo.svg"
+  },
+  {
+    "name": "mixsoon",
+    "file": "/brand-logos/mixsoon.png",
+    "source": "https://mixsoon.us/cdn/shop/files/2c033f04efc2ffb54d04b8b15ceceb30.png?v=1755158966&width=600"
+  },
+  {
+    "name": "Sulwhasoo",
+    "file": "/brand-logos/sulwhasoo.png",
+    "source": "https://www.sulwhasoo.com/web/upload/category/logo/v2_f8a12b582bf0474c09a182c395f6766a_qrPrwjQYpN_top.jpg"
+  },
+  {
+    "name": "innisfree",
+    "file": "/brand-logos/innisfree.png",
+    "source": "https://www.innisfree.com/kr/ko#header",
+    "note": "Exact embedded PNG from the official header."
+  },
+  {
+    "name": "VT Cosmetics",
+    "file": "/brand-logos/vt-cosmetics.png",
+    "source": "https://www.vt-cosmetics.com/images/cm_logo_1_black.png"
+  },
+  {
+    "name": "Torriden",
+    "file": "/brand-logos/torriden.png",
+    "source": "https://torriden2.cdn-nhncommerce.com/data/skin/front/mo_designart/img/banner/03b0b50ebf12bb71f624b6ee36ab73a9_44226.png"
+  },
+  {
+    "name": "Dear, Klairs",
+    "file": "/brand-logos/dear-klairs.png",
+    "source": "https://www.klairs.com/cdn/shop/files/DK_logo_Black.png?v=1770850941&width=600"
+  },
+  {
+    "name": "Guerlain",
+    "file": "/brand-logos/guerlain.svg",
+    "source": "https://www.guerlain.com/on/demandware.static/Sites-Guerlain_US-Site/-/default/dwb870cbd4/images/guerlain.svg"
+  },
+  {
+    "name": "Tarte",
+    "file": "/brand-logos/tarte.png",
+    "source": "https://tartecosmetics.com/cdn/shop/files/0910_logo_tarte_taxi.png?v=1789142877"
+  },
+  {
+    "name": "Too Faced",
+    "file": "/brand-logos/too-faced.png",
+    "source": "https://www.toofaced.com/media/export/cms/collection_pages/holiday/2026/logo.png"
+  },
+  {
+    "name": "L'Occitane Group",
+    "file": "/brand-logos/l-occitane-group.svg",
+    "source": "https://group.loccitane.com/#logo_occitane",
+    "note": "Exact corporate-group logo symbol from the official header."
   }
 ]
