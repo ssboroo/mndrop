@@ -81,3 +81,9 @@ Operations → Integrations accepts a product URL from a configured brand websit
 Customer profiles collect delivery contact information with required privacy consent and independent optional marketing consent. Verified paid orders show confirmed shipment milestones and timestamps; the client refreshes visible order pages every ten seconds. Real supplier/shipping updates still require a trusted operational source.
 
 Live launch remains gated on merchant-approved QPay credentials and reviewed mapping, email provider credentials, approved campaign/brand records, and a running scheduler. Railway includes the protected periodic job worker; Sites requires an external authorized scheduler calling the job endpoint. Website import is independent of these payment credentials.
+
+## Approved visual assets
+
+Campaign content supports up to six photoshoot/background URLs and a photography/talent credit, alongside a separate product photograph and approved GLB. Each campaign image participates in the existing human content/media-rights review; uploaded images also require media record approval. Background photographs switch independently of the selected product. Celebrity imagery must be an authorized campaign asset; importing a photograph does not establish talent rights or endorsement.
+
+Approved products never render a concept mesh while their actual model is loading or unavailable. They show their product photograph, with bounded fetch/model timeouts and a graceful loader fallback. Desktop rendering uses antialiasing, PBR lighting and a pixel budget up to 2560 × 1440, preserving viewport aspect ratio; actual sharpness depends on the approved mesh and textures, viewport and device. A single product photograph cannot establish exact geometry or packaging fidelity. Use supplier GLBs or reviewed multi-angle generation. No real supplier models are fabricated when none have been supplied.

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "BEAUTY DROP — Limited beauty. A moment in time.",
+  title: "BEAUTY DROP MONGOLIA — Exclusive beauty drops",
   description: "A considered selection of beauty drops for Mongolia. Limited editions, exclusive releases and transparent pre-orders.",
   other: {
     "codex-preview": "development",
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="mn">
+    <html lang="mn" className="dark">
       <body className="antialiased">{children}</body>
     </html>
   );

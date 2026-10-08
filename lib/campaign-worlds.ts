@@ -8,4 +8,4 @@ export const campaignWorlds=[
 ] as const;
 export function campaignWorldIndex(drop:CommerceDrop){return Math.max(0,Math.min(4,drop.environment??['pink','blue','rose','gold','gray'].indexOf(drop.tone)))}
 // Original editorial concept sets. Never present these as approved supplier assets.
-export function campaignBackdrop(drop:CommerceDrop){return drop.approved?undefined:'/worlds/'+campaignWorlds[campaignWorldIndex(drop)].key+'.webp'}
+export function campaignBackdrop(drop:CommerceDrop){return drop.approved?drop.content?.campaignImages?.[0]:'/worlds/'+campaignWorlds[campaignWorldIndex(drop)].key+'.webp'}
