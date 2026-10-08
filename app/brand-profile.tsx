@@ -1,7 +1,31 @@
 'use client';
-import type {CSSProperties} from 'react';
-import {ArrowUpRight,ArrowLeft,LockKeyhole} from 'lucide-react';
+import {ArrowUpRight, ArrowLeft, ArrowRight, LockKeyhole} from 'lucide-react';
 import Link from './site-link';
 import {BrandMark} from './brand-directory';
-import {brandCategories,type DirectoryBrand} from '@/lib/brand-directory';
-export default function BrandProfile({brand,mn}:{brand:DirectoryBrand;mn:boolean}){const t=(a:string,b:string)=>mn?a:b;return <section className="brand-profile" style={{'--brand-bg':brand.bg,'--brand-ink':brand.ink,'--logo-filter':brand.ink.startsWith('#f')?'brightness(0) invert(1)':'brightness(0)','--opaque-filter':brand.ink.startsWith('#f')?'invert(1)':'none','--opaque-blend':brand.ink.startsWith('#f')?'screen':'multiply'} as CSSProperties}><div className="brand-profile-world" aria-hidden="true"><img src={'/worlds/'+brand.world+'.webp'} alt=""/><div/><span className="brand-profile-orbit"/><span className="brand-profile-orbit second"/></div><div className="brand-profile-top"><Link href="/brands"><ArrowLeft size={16}/>{t('Бүх брэнд','All brands')}</Link><span>BEAUTY HOUSE / {String(brandCategories.findIndex(c=>c.id===brand.categories[0])+1).padStart(2,'0')}</span></div><div className="brand-profile-heading"><span className="eyebrow">THE WORLD OF / {brand.categories[0].toUpperCase()}</span><h1><BrandMark brand={brand}/></h1><div className="brand-profile-tags">{brand.categories.map(id=>{const c=brandCategories.find(c=>c.id===id)!;return <Link key={id} href={'/brands?category='+id}>{mn?c.mn:c.en}<ArrowUpRight size={12}/></Link>})}</div></div><div className="brand-profile-release"><span className="eyebrow">THE NEXT CHAPTER</span><h2>{t('Онцгой мөчийг\nхүлээх урлаг.','The art of\nanticipation.')}</h2><div><LockKeyhole size={17}/><span>{t('Батлагдсан дроп одоогоор байхгүй','No approved drop is currently published')}</span></div><p>{t('Бүтээгдэхүүн, үнэ, нээлтийн хугацааг брэндийн зөвшөөрөлтэйгөөр баталгаажуулсны дараа энд нийтэлнэ.','Authorized products, pricing and release times will appear here after campaign approval.')}</p><Link className="brand-profile-action" href="/upcoming">{t('Нээлтийн хуанли','Explore the release calendar')}<ArrowUpRight size={17}/></Link></div><div className="brand-profile-bottom"><span>{t('БРЭНДИЙН ЛАВЛАХ · АЛБАН ЁСНЫ ТҮНШЛЭЛ БАТЛАГДААГҮЙ','BRAND DIRECTORY · PARTNERSHIP NOT CONFIRMED')}</span><span>BEAUTY DROP MONGOLIA EDITORIAL WORLD</span></div></section>}
+import {BrandBackdrop, brandStyle} from './brand-theme';
+import {brandCategories, directoryBrands, type DirectoryBrand} from '@/lib/brand-directory';
+
+export default function BrandProfile({brand, mn}: {brand: DirectoryBrand; mn: boolean}) {
+  const t = (mnText: string, enText: string) => mn ? mnText : enText;
+  const index = directoryBrands.findIndex(value => value.id === brand.id);
+  const next = directoryBrands[(index + 1) % directoryBrands.length];
+  return <section className="brand-profile" style={brandStyle(brand)}>
+    <BrandBackdrop brand={brand} />
+    <div className="brand-profile-top"><Link href="/brands"><ArrowLeft size={16} />{t('Бүх брэнд', 'All brands')}</Link><span>THE BRAND EDIT / {String(index + 1).padStart(2, '0')}</span></div>
+    <div className="brand-profile-heading">
+      <span className="eyebrow">{brand.name.toUpperCase()} / BEAUTY HOUSE</span>
+      <h1><BrandMark brand={brand} eager /></h1>
+      <p className="brand-profile-mood">{mn ? brand.theme.labelMn : brand.theme.labelEn}<span>.</span></p>
+      <div className="brand-profile-tags">{brand.categories.map(id => {const category = brandCategories.find(value => value.id === id)!; return <Link key={id} href={'/brands?category=' + id}>{mn ? category.mn : category.en}<ArrowUpRight size={12} /></Link>;})}</div>
+      <a className="brand-official-link" href={brand.theme.website} target="_blank" rel="noopener noreferrer">{t('Албан ёсны сайт', 'Visit official website')}<ArrowUpRight size={14} /></a>
+    </div>
+    <div className="brand-profile-release">
+      <span className="eyebrow">THE NEXT CHAPTER</span>
+      <h2>{t('Дараагийн\nонцгой мөч.', 'A new moment,\nin the making.')}</h2>
+      <div><LockKeyhole size={15} /><span>{t('Шинэ дроп хараахан нээгдээгүй', 'No approved drop is currently published')}</span></div>
+      <p>{t('Баталгаажсан бүтээгдэхүүн, үнэ, нээлтийн хугацаа энд харагдана.', 'Authorized products, pricing and release dates will appear here.')}</p>
+      <Link className="brand-profile-action" href="/upcoming">{t('Нээлтийн хуанли', 'The release calendar')}<ArrowUpRight size={17} /></Link>
+    </div>
+    <div className="brand-profile-bottom"><span>{t('БИЕ ДААСАН ТАНИЛЦУУЛГА · ТҮНШЛЭЛ БАТЛАГДААГҮЙ', 'INDEPENDENT BRAND DIRECTORY · PARTNERSHIP NOT CONFIRMED')}</span><Link href={'/brands/' + next.id}>{t('Дараагийн брэнд', 'Next house')}<strong>{next.name}</strong><ArrowRight size={16} /></Link></div>
+  </section>;
+}
