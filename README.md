@@ -69,3 +69,7 @@ The gallery starts with an actual loading-progress presentation: module import, 
 Drop, upcoming, archive, brand and editorial product surfaces lazy-load native 3D product scenes on intersection. The existing single-screen direction retains brand-specific glass/chrome/rose/gold/pearl architecture and gains soft contact shadows, moving reflection lights and restrained atmospheric particles. Countdown faces animate on actual time changes and use ceiling seconds so the UI does not announce closure one second early. Reduced-motion and photographic fallbacks remain supported.
 
 The current managed preview cannot be reached for browser interaction testing. TypeScript and both runtime production builds are the available interface validation; provider and commerce tests remain unchanged.
+
+### Independent brand directory
+
+The 90 requested beauty houses appear in a bilingual, searchable directory with six category filters, alphabet filtering, individual editorial profiles and a homepage logo ribbon. The directory is informational: it grants no partner authorization and creates no product inventory, pricing or campaign schedules. Brand logos were collected from the respective websites and visually checked; source attribution is retained in `public/brand-logos/sources.json`. Brands without a verified logo use a plain typographic name. Editorial palettes and original architectural backgrounds are explicitly independent of official brand campaign materials. Only reviewed commerce campaigns can open checkout.
