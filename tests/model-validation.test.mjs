@@ -1,0 +1,6 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {imageMime,validateGlb,meshyPayload} from '../lib/model-validation.ts';
+function glb(json){const text=JSON.stringify(json),length=Math.ceil(text.length/4)*4,b=new Uint8Array(20+length);const v=new DataView(b.buffer);v.setUint32(0,0x46546c67,true);v.setUint32(4,2,true);v.setUint32(8,b.length,true);v.setUint32(12,length,true);v.setUint32(16,0x4e4f534a,true);b.fill(32,20);b.set(new TextEncoder().encode(text),20);return b}
+test('reject disguised images',()=>{assert.throws(()=>imageMime(new TextEncoder().encode('<script>')));assert.equal(imageMime(new Uint8Array([255,216,255])),'image/jpeg')});
+test('only self-contained binary glTF 2 is accepted',()=>{assert.equal(validateGlb(glb({asset:{version:'2.0'},buffers:[{byteLength:0}]})),true);assert.throws(()=>validateGlb(glb({images:[{uri:'https://untrusted.example/image.png'}]})));assert.throws(()=>validateGlb(new Uint8Array(30)))});
+test('generation preserves packaging and requests PBR without exposing keys',()=>{const p=meshyPayload(['data:image/png;base64,AA']);assert.equal(p.ai_model,'meshy-7.1');assert.equal(p.image_enhancement,false);assert.equal(p.enable_pbr,true);assert.equal(p.texture_resolution,'4k');assert.equal(p.target_polycount,60000);assert.throws(()=>meshyPayload([]));assert.throws(()=>meshyPayload(Array(5).fill('x')))});

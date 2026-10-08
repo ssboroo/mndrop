@@ -1,0 +1,12 @@
+// QPay Merchant V2 endpoints, based on developer.qpay.mn/mn/docs/merchant.
+// Provider responses remain untrusted until mapped against merchant sandbox fixtures.
+let auth:{value:string;expires:number}|undefined;
+export function qpayConfigured(){return Boolean(process.env.QPAY_USERNAME&&process.env.QPAY_PASSWORD&&process.env.QPAY_INVOICE_CODE)}
+function base(){const b=process.env.QPAY_BASE_URL||'https://merchant-sandbox.qpay.mn';if(!['https://merchant.qpay.mn','https://merchant-sandbox.qpay.mn'].includes(b))throw Error('Unapproved payment host');return b;}
+async function accessToken(){if(!qpayConfigured())throw Error('QPay merchant credentials missing');if(auth&&auth.expires>Date.now())return auth.value;const r=await fetch(base()+'/v2/auth/token',{method:'POST',headers:{Authorization:'Basic '+Buffer.from(process.env.QPAY_USERNAME+':'+process.env.QPAY_PASSWORD).toString('base64')},signal:AbortSignal.timeout(10000)});if(!r.ok)throw Error('QPay authentication unavailable');const b:any=await r.json();if(typeof b.access_token!=='string'||typeof b.expires_in!=='number')throw Error('QPay authentication schema requires verification');auth={value:b.access_token,expires:Date.now()+Math.max(0,b.expires_in-60)*1000};return auth.value;}
+async function call(path:string,body:unknown){const token=await accessToken();const r=await fetch(base()+path,{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(10000)});if(!r.ok)throw Error('QPay request failed');return r.json();}
+export async function createInvoice(input:{orderId:string;amountMnt:number;callbackUrl:string}){if(!Number.isSafeInteger(input.amountMnt)||input.amountMnt<=0)throw Error('Invalid MNT amount');return call('/v2/invoice',{invoice_code:process.env.QPAY_INVOICE_CODE,sender_invoice_no:input.orderId,invoice_receiver_code:'terminal',invoice_description:'BEAUTY DROP order '+input.orderId,amount:input.amountMnt,callback_url:input.callbackUrl})}
+export async function checkInvoice(invoiceId:string){if(!invoiceId||invoiceId.length>160)throw Error('Invalid invoice reference');return call('/v2/payment/check',{object_type:'INVOICE',object_id:invoiceId,offset:{page_number:1,page_limit:100}})}
+// Payment enablement intentionally requires a reviewed response mapper, sandbox
+// fixtures, merchant ownership verification and idempotent settlement transaction.
+// No callback payload or provider fetch alone marks an order PAID.

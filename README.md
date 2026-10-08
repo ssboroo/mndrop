@@ -81,3 +81,14 @@ The closure job requires `Bearer JOB_SECRET`. Configure its Railway schedule aft
 ## Verification
 
 Critical tests cover exact opening/closing boundaries, unauthorized and embargoed drops, irreversible closure and delayed jobs. The TypeScript check, both runtime builds and Prisma schema/migration are validated before the implementation commit. These checks do not perform real payment, supplier or email actions. Browser visual and WebMCP validation are unavailable in this environment.
+
+## Volume 02: product experience and Image → 3D Studio
+The redesigned pearl / burgundy interface shares a 360° studio viewer across the homepage, product detail and model studio. Concept geometry is explicitly labeled; it is not an AI reconstruction of the photographs. Approved imported/generated GLBs replace concepts automatically. Original concept photographs are in public/petal-reset.webp and public/blue-hour.webp.
+
+Visit `/studio`. Self-contained GLB 2 models can be previewed locally without sending a file to a provider. Allowlisted administrators can persist GLBs, submit 1–4 PNG/JPEG views to Meshy and review the result. Generation requests use Meshy 7.1, 2K geometry, 4K PBR textures and a 60,000-polygon web target. AI reconstruction requires visual review, particularly labels and transparent packaging; exact unseen geometry cannot be recovered from one photograph.
+
+Sites: set MESHY_API_KEY as a server secret; MEDIA is the durable R2 binding. Railway: configure MESHY_API_KEY and the S3_* variables in railway/.env.example, plus existing ADMIN_EMAILS and authentication. Uploaded source images and generated GLBs are stored in object storage, job metadata in D1/PostgreSQL. Nothing is generated when the API key is absent. The provider may bill after accepting a job; failed/ambiguous submissions are not automatically retried. Check the Meshy dashboard before resubmission. Administrators are capped at 10 recorded studio jobs per rolling day.
+
+Generation progress refreshes while the studio page is open. Durable provider task IDs permit later resumption. This is polling, not a configured background worker. A completed model enters REVIEW. Explicit media-rights and visual-review approval binds it to a drop, records an audit event and makes its file publicly accessible on the site's existing audience. Model approval does not authorize brand partnership, campaign commerce or payment.
+
+Verification: TypeScript, both build targets, 8 boundary/file-validation tests. Live Meshy generation is unverified until credentials are configured.

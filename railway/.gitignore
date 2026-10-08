@@ -2,9 +2,9 @@ node_modules/
 .next/
 .env*
 !.env.example
-app/
-components/
-lib/
-public/
-db/
+/app/
+/components/
+/lib/
+/public/
+/db/
 next-env.d.ts

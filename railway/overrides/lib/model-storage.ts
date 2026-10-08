@@ -1,0 +1,5 @@
+import {S3Client,PutObjectCommand,GetObjectCommand} from '@aws-sdk/client-s3';
+function client(){const {S3_ENDPOINT,S3_ACCESS_KEY_ID,S3_SECRET_ACCESS_KEY}=process.env;if(!S3_ENDPOINT||!S3_ACCESS_KEY_ID||!S3_SECRET_ACCESS_KEY||!process.env.S3_BUCKET)throw Error('Object storage is not configured');return new S3Client({endpoint:S3_ENDPOINT,region:process.env.S3_REGION||'auto',forcePathStyle:true,credentials:{accessKeyId:S3_ACCESS_KEY_ID,secretAccessKey:S3_SECRET_ACCESS_KEY}})}
+export function modelConfig(){return {key:process.env.MESHY_API_KEY,bucket:process.env.S3_ENDPOINT&&process.env.S3_ACCESS_KEY_ID&&process.env.S3_SECRET_ACCESS_KEY&&process.env.S3_BUCKET?true:undefined}}
+export async function putModelFile(key:string,bytes:Uint8Array,type:string){await client().send(new PutObjectCommand({Bucket:process.env.S3_BUCKET,Key:key,Body:bytes,ContentType:type}))}
+export async function getModelFile(key:string){try{const r=await client().send(new GetObjectCommand({Bucket:process.env.S3_BUCKET,Key:key}));return r.Body?{body:r.Body.transformToWebStream(),type:r.ContentType||'application/octet-stream'}:null}catch(e){if((e as any).name==='NoSuchKey')return null;throw e}}

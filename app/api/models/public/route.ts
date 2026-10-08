@@ -1,0 +1,2 @@
+import {database} from '@/db/raw';
+export async function GET(req:Request){try{const drop=new URL(req.url).searchParams.get('drop');const job=await database().prepare('SELECT id FROM model_jobs WHERE drop_id=? AND status=? ORDER BY approved_at DESC LIMIT 1').bind(drop,'APPROVED').first<any>();return Response.json({url:job?'/api/models/file?id='+job.id:null})}catch{return Response.json({url:null},{status:503})}}
