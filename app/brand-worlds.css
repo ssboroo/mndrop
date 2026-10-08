@@ -85,3 +85,16 @@
 .brand-collection-world .single-stage .stage-selector button{color:var(--brand-ink);border-color:color-mix(in srgb,var(--brand-ink) 35%,transparent)}
 .brand-collection-world .single-stage .stage-selector button.selected{background:var(--brand-ink);color:var(--brand-bg)}
 .brand-collection-world .single-stage .campaign-scrim{background:linear-gradient(180deg,color-mix(in srgb,var(--brand-bg) 65%,transparent),color-mix(in srgb,var(--brand-bg) 35%,transparent) 35%,color-mix(in srgb,var(--brand-bg) 85%,transparent) 74%,var(--brand-bg))}
+
+/* Selection, motion controls and narrow layouts stay usable without global styles. */
+.directory-categories button.active,.directory-alphabet button.active{background:#8c5b6e;color:#fffaf6}
+.directory-categories button:focus-visible,.directory-alphabet button:focus-visible,.directory-more:focus-visible,.directory-search button:focus-visible,.ribbon-motion:focus-visible{outline:2px solid #8c5b6e;outline-offset:3px}
+.directory-search input{min-width:0;flex:1}.directory-search button{flex-shrink:0;padding:6px}
+.ribbon-motion{position:relative;z-index:2;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid #8c5b6e40;border-radius:50%;margin-right:12px;background:#faf8f5}
+.ribbon-track.is-paused{animation-play-state:paused}
+.brand-profile{height:auto;min-height:max(720px,calc(100svh - 96px))}
+.brand-profile-top>span{text-align:right}.brand-profile-bottom strong{overflow-wrap:anywhere}
+.brand-profile-release>div svg{flex-shrink:0}
+@media(min-width:701px) and (max-width:850px){.brand-profile{gap:24px;padding-inline:5%}.brand-profile-heading{flex:1}.brand-profile-release{width:42%;min-width:240px;padding:20px}.brand-profile-heading .eyebrow{letter-spacing:.06em}}
+@media(max-width:420px){.directory-heading>div:first-child{min-width:0}.directory-heading h1{font-size:clamp(40px,11vw,48px)}.directory-heading .eyebrow{letter-spacing:.04em}.directory-emblem{display:none}.directory-card-bottom strong{overflow-wrap:anywhere}.brand-profile-top{gap:12px}.brand-profile-top>span{font-size:7px;letter-spacing:.04em}}
+@media(prefers-reduced-motion:reduce){.ribbon-motion{display:none}.brand-profile-bottom>a:hover svg{transform:none}}
