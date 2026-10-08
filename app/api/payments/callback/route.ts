@@ -1,4 +1,5 @@
-// Callback content is untrusted. Never mark paid from a callback or client redirect.
-// A configured provider must independently verify invoice, exact MNT amount,
-// merchant identity and settled status, with an idempotent database transaction.
-export async function POST(){return Response.json({error:'Payment verification provider is not configured. No order has been marked paid.'},{status:503});}
+import {receivePayment} from '@/lib/checkout-service';
+import {CommerceError} from '@/lib/commerce-types';
+async function callback(req:Request){const url=new URL(req.url),id=url.searchParams.get('order')||'',token=url.searchParams.get('token')||'';if(id.length>100||token.length>150)return Response.json({error:'Invalid callback'},{status:400});try{return Response.json(await receivePayment(id,token))}catch(e){return Response.json({error:e instanceof CommerceError?e.message:'Callback verification unavailable'},{status:e instanceof CommerceError?e.status:503})}}
+export const POST=callback;
+export const GET=callback;

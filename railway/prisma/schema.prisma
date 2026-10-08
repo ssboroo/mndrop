@@ -204,3 +204,170 @@ model ModelJob {
  @@index([dropId,status],map:"idx_model_public")
  @@map("model_jobs")
 }
+
+model CommerceAuthTokens {
+ hash String @id
+ email String
+ expires_at String
+ @@map("commerce_auth_tokens")
+}
+
+model CommerceContacts {
+ user_id String @id
+ email String
+ @@map("commerce_contacts")
+}
+
+model CommerceContent {
+ campaign_id String @id
+ content String
+ review_by String?
+ review_at String?
+ @@map("commerce_content")
+}
+
+model CommerceDecisions {
+ order_id String @id
+ state String
+ valid Int
+ @@map("commerce_decisions")
+}
+
+model CommerceEvents {
+ id String @id
+ order_id String
+ state String
+ note String
+ created_at String
+ @@unique([order_id,state])
+ @@map("commerce_events")
+}
+
+model CommerceImports {
+ id String @id
+ partner_id String
+ format String
+ payload String
+ status String @default("REVIEW")
+ created_by String
+ created_at String
+ @@map("commerce_imports")
+}
+
+model CommerceJobs {
+ id String @id
+ kind String
+ payload String
+ status String @default("PENDING")
+ attempts Int @default(0)
+ run_at String
+ lock_at String?
+ error String?
+ @@map("commerce_jobs")
+}
+
+model CommerceLineVariants {
+ line_id String @id
+ variant_id String
+ @@map("commerce_line_variants")
+}
+
+model CommerceMedia {
+ id String @id
+ asset_key String
+ type String
+ approved_by String?
+ created_by String
+ created_at String
+ @@map("commerce_media")
+}
+
+model CommerceOrderMeta {
+ order_id String @id
+ email String
+ address String
+ expires_at String
+ idempotency String @unique
+ invoice_id String? @unique
+ invoice_data String?
+ callback_hash String
+ shipping_state String @default("PRE_ORDER")
+ tracking String?
+ supplier_reference String?
+ checked_at String?
+ @@map("commerce_order_meta")
+}
+
+model CommercePurchaseOrders {
+ id String @id
+ campaign_id String @unique
+ status String
+ quantities String
+ approved_by String?
+ approved_at String?
+ supplier_reference String?
+ invoice_url String?
+ created_at String
+ @@map("commerce_purchase_orders")
+}
+
+model CommerceRate {
+ key String @id
+ count Int
+ @@map("commerce_rate")
+}
+
+model CommerceReceipts {
+ payment_id String @id
+ order_id String
+ amount_mnt Int
+ verified_at String
+ evidence String
+ @@map("commerce_receipts")
+}
+
+model CommerceSessions {
+ hash String @id
+ user_id String
+ email String
+ expires_at String
+ @@map("commerce_sessions")
+}
+
+model CommerceTickets {
+ id String @id
+ user_id String
+ email String
+ order_id String?
+ subject String
+ message String
+ status String @default("OPEN")
+ response String?
+ created_at String
+ @@map("commerce_tickets")
+}
+
+model CommerceUsage {
+ user_id String
+ variant_id String
+ quantity Int
+ max_quantity Int
+ @@id([user_id,variant_id])
+ @@map("commerce_usage")
+}
+
+model CommerceVariants {
+ id String @id
+ campaign_id String
+ sku String
+ label String
+ price_mnt Int
+ map_mnt Int
+ allocation Int
+ reserved Int @default(0)
+ paid_qty Int @default(0)
+ moq Int
+ max_per_customer Int
+ @@unique([campaign_id,sku,label])
+ @@map("commerce_variants")
+}

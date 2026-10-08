@@ -1,5 +1,6 @@
 import BeautyApp from '../../beauty-app';
-import {drops} from '@/lib/catalog';
+import {publicDrop,catalog} from '@/lib/commerce-store';
+export const dynamic='force-dynamic';
 import {notFound} from 'next/navigation';
-export async function generateMetadata({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const d=drops.find(d=>d.id===slug);return {title:d?`${d.name} — BEAUTY DROP`:'Drop not found',description:d?.description};}
-export default async function Page({params}:{params:Promise<{slug:string}>}){const {slug}=await params;if(!drops.some(d=>d.id===slug))notFound();return <BeautyApp view="detail" slug={slug}/>}
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const d=await publicDrop(slug);return {title:d?`${d.name} — BEAUTY DROP`:'Drop not found',description:d?.description};}
+export default async function Page({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const initialCatalog=await catalog();if(!initialCatalog.some(d=>d.id===slug))notFound();return <BeautyApp view="detail" slug={slug} initialCatalog={initialCatalog}/>}

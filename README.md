@@ -1,102 +1,62 @@
 # BEAUTY DROP Mongolia
 
-A bilingual luxury editorial beauty platform inspired by the supplied **01 / DROP//OS** reference. Original blush-glass campaign photography, restrained black/pink typography, scroll-driven WebGL 3D product stage inspired by Agrumea, cinematic homepage, responsive drop catalog and detail pages, upcoming calendar, wishlist, search, accounts, journal, permanent archive, support/policies and a protected operations studio.
+Bilingual drop-only beauty commerce with the existing single-screen editorial 3D design. Product picking, arrows and swipes change the product, brand environment, description, MNT price and exact UTC+08:00 deadline. Navigation opens separate pages. There is no scroll-driven product narrative.
 
-## Current release
+## Implemented commerce workflows
 
-This is an implemented **commerce foundation and editorial preview**, not a finished live retailer. Every ATELIER campaign is labelled as a design concept, with no real brand partnerships, stock or verified ingredient claims. Purchasing is locked. No order is marked paid and no supplier order is sent.
+- A database-backed catalog replaces concept fixtures when reviewed campaigns are published. The ATELIER fallback is explicitly a concept and cannot be purchased.
+- Campaign draft and bilingual content editor, signed brand-evidence records, approved product GLB references, photograph upload to object storage, media-rights approval, MAP pricing, SKU/variant allocation, customer limits, MOQ, embargo and exact opening/closing timestamps.
+- Separate human content approval before publication. Authorization must match the brand and remain valid through closure. CLOSED and ARCHIVED never reopen. Expired windows fail on the server even if scheduled work is delayed.
+- User-scoped wishlist, notifications, cart, email login in the Railway target, checkout addresses, consent snapshots, order history, delivery timeline and persistent support tickets/responses.
+- Transactional reservations, unique checkout idempotency keys, database stock/customer-limit constraints and one campaign per checkout. A failed transaction leaves no orphan order or allocation change.
+- QPay Merchant V2 authentication, invoice creation, QR/deep links, callback-triggered independent payment checks, strict invoice/currency/amount/identity validation, unique payment receipts and a single financial decision per reservation. No posted callback payload, screenshot or customer button marks an order paid.
+- Provider-confirmed invoice cancellation before reservation release. Ambiguous invoice responses retain their reservation for reconciliation. Late verified payments enter REFUND_REQUIRED and never consume new allocation.
+- Paid-only SKU/variant consolidation, MOQ rejection without quantity inflation, one immutable PO per campaign, separate human supplier approval, approved commercial CSV export, actual supplier invoice/reference records, sequential shipping stages and audit logs.
+- Refunds are recorded only after staff explicitly confirms an externally completed, reconciled transfer and supplies evidence. This is not an automatic QPay refund. Refunds after a PO is prepared require supplier reconciliation and cannot be recorded through this shortcut.
+- JSON/CSV/XML/structured-email import review inbox. Imports remain unpublished until separate campaign review. REST/GraphQL/Shopify/SFTP/EDI remain partner-adapter contracts, not connected services.
+- Durable email outbox with idempotent send keys, bounded retries and job locks. Scheduled processing opens approved upcoming campaigns, permanently closes expired campaigns, cancels expired invoices and sends queued launch/order/support messages. It does not poll QPay payment status from cron.
+- Server-only administrator allowlist; customers cannot grant themselves access. Customer records are ownership-scoped, mutation APIs enforce same-origin requests and operations write audit records.
 
-### Implemented
+## Runtime targets
 
-- Real Three.js floating-product carousel, scroll-driven depth and rotation, pointer parallax, keyboard/touch-friendly selection, reduced motion, lazy loading, offscreen render suspension and an image fallback. The original procedural bottle models are editorial concepts, not scanned brand products.
-- Mongolian/English interface and MNT pricing; responsive desktop/mobile layouts and reduced-motion support.
-- Server-side purchase time gates in UTC+08:00. CLOSED and ARCHIVED cannot reopen.
-- Persistent user-scoped wishlists and notification **preferences**; delivered notifications are not claimed.
-- Accounts, order-history queries, protected admin drafts, evidence records, transitions, paid-only consolidation queries and audit writes.
-- CSRF origin checks and server-configured administrative allowlists.
-- QPay Merchant V2 adapter architecture, locked pending merchant-specific settlement verification.
-- Railway runtime with Next.js, PostgreSQL/Prisma, migration SQL, secure single-use email login through Resend, hashed sessions, health endpoint, authenticated closure job, transactional publication/MAP/embargo guards, paid-only MOQ consolidation and human PO approval.
+The root is a private Sites review deployment using Next-compatible Vinext, D1, R2 and ChatGPT identity. `railway/` is the requested independent Next.js + TypeScript + PostgreSQL/Prisma target, sharing the same interface and commerce service. Tailwind, shadcn components, Motion and Three.js remain in use.
 
-### Still required for live commerce
+Edit shared `app/`, `lib/`, `db/`, `public/` and Railway runtime overrides. `railway/scripts/prepare.mjs` prepares ignored runtime copies; do not edit those copies. Versioned migrations exist for both databases. Previously applied migrations must remain immutable.
 
-- Merchant configuration, QPay sandbox fixtures and idempotent reservation/settlement/refund implementation.
-- Complete campaign/product publishing UI and database-backed storefront catalog. The storefront currently uses concept fixtures.
-- Actual partner credentials, APIs and reviewed CSV/XML/JSON/SFTP/EDI/Shopify adapters. `PartnerAdapter` is a contract, not a live connection.
-- Supplier PO submission, invoices, shipping ingestion and customer notification delivery.
-- Object-storage media upload and approval workflow.
-- Granular staff roles beyond customer/admin, customer management and full analytics.
-- Real PostgreSQL, email, payment, supplier and browser end-to-end verification.
+Railway deploys with the repository root as Docker build context and `railway/railway.toml`. Set actual values from `railway/.env.example`, including DATABASE_URL, canonical HTTPS APP_URL, ADMIN_EMAILS, domain-verified EMAIL_FROM, RESEND_API_KEY, JOB_SECRET and S3 storage credentials. Docker applies migrations before starting the app. The start script processes jobs once per minute when JOB_SECRET is present; set JOB_WORKER_ENABLED=false to use an external scheduler calling `POST /api/jobs/process` with Bearer JOB_SECRET instead. The alias `/api/jobs/close` uses the same processor.
 
-## Deployment targets
+Email magic links are single-use, expire in 15 minutes and are rate-limited. Session cookies are Secure, HttpOnly and SameSite=Lax; only their hashes are stored. Railway does not trust platform identity headers.
 
-### Root: editorial preview
+## QPay enablement
 
-The root uses Next.js-compatible Vinext, Tailwind, shadcn primitives and platform-backed D1 storage. It uses ChatGPT sign-in and is a private review surface, separate from Railway production.
+Set QPAY_USERNAME, QPAY_PASSWORD, QPAY_INVOICE_CODE, QPAY_RECEIVER_CODE, APP_URL and the approved merchant endpoint. Checkout remains disabled until QPAY_MAPPER_REVIEWED=true. Enable this only after testing the merchant's actual sandbox fixtures against `lib/settlement-contract.ts`, callback retries, invoice cancellation and ambiguous invoice creation. The strict contract requires PAID, MNT, the matching INVOICE object ID, unique payment IDs and the exact order total. Provider response schemas that differ must be reviewed and mapped before enablement; they fail closed today.
 
-```
-pnpm install
-pnpm build
-node --experimental-strip-types --test tests/drop-rules.test.mjs
-```
+The implementation never retries an ambiguous invoice creation blindly because the merchant may already have accepted the unique sender invoice number. Missing invoice IDs require provider-dashboard reconciliation. Credentials and a configuration flag alone are not evidence of a passing sandbox test.
 
-Set `ADMIN_EMAILS` in the host environment to grant administrative access. Empty means no administrator. Browser input cannot grant roles.
+## Product photography and 3D
 
-### Railway: requested PostgreSQL/Prisma target
+`/studio` supports local GLB preview and persistent administrator uploads or 1–4-view Meshy image-to-3D submissions. Source photographs and generated GLBs use object storage; task IDs and progress use the database. Generation requires a real MESHY_API_KEY. Completed assets enter REVIEW and require human rights/visual approval. Exact packaging, labels and unseen geometry cannot be guaranteed from photographs; approved imported models are also supported. Model approval is separate from brand and commerce approval.
 
-`railway/` packages the same UI with standard Next.js and PostgreSQL, independent of platform identity headers and D1. Its preparation script copies shared source and applies runtime overrides. Generated copies are ignored; edit shared UI at the root and runtime code in `railway/overrides/`.
+Published commercial campaigns require an approved product GLB. Their actual model replaces the labeled procedural concept. Five architectural environments preserve the established design. WebGL is lazy-loaded, caps DPR, pauses offscreen and respects reduced motion. Failed rendering has a photograph fallback.
 
-Use `railway/railway.toml` with the **repository root** as build context. The Dockerfile installs the locked dependencies, builds the UI, and applies versioned migrations before starting Next.js.
+## APIs
 
-```
-cd railway
-npm ci
-# Set environment variables from .env.example.
-npm run build
-npm run db:migrate
-npm start
-```
+- `/api/catalog`: approved public campaigns and authoritative prices/allocation.
+- `/api/customer`: owned preferences/cart and order history.
+- `/api/admin`, `/api/operations`: protected content, publication, PO, shipping, refund, support and import workflows.
+- `/api/checkout`: payment readiness and idempotent reservation/invoice creation.
+- `/api/payments/callback`: independently verified settlement, callback-only.
+- `/api/orders/[id]`: scoped order details and cancellation of unpaid invoices.
+- `/api/support`: persistent owned tickets and responses.
+- `/api/purchase-orders/[id]`: human-approved commercial PO CSV.
+- `/api/media`, `/api/models/*`: persistent reviewed photographs and GLBs.
+- Railway `/api/auth/email`, `/api/auth/callback`, `/api/auth/signout`, `/api/health`.
+- `/api/jobs/process`: authenticated bounded job processor.
 
-`APP_URL` must be the canonical HTTPS origin. `ADMIN_EMAILS` grants reviewed staff access. `RESEND_API_KEY` and domain-verified `EMAIL_FROM` enable email registration/login. Single-use links expire after 15 minutes. Session cookies are Secure, HttpOnly, SameSite=Lax and are stored only as hashes in PostgreSQL.
+## Verification and launch limits
 
-Never use placeholders for live credentials. Build-time Prisma generation does not require a reachable database, but running APIs and migrations requires a real PostgreSQL instance.
+TypeScript, both runtime builds, Prisma schema validation, 8 existing campaign/GLB tests and 9 integration tests validate real application SQL against SQLite. Integration tests cover competing reservations, transaction rollback, checkout retries, duplicate settlement, forged callbacks, wrong currency/invoice/amount, late payments, exact paid quantities, MOQ, unresolved invoices and publication approvals. Test payment responses are explicit fixtures, not live integrations.
 
-## Commerce invariants
+This is not yet a verified live retailer. No merchant, email, AI or supplier credentials have been supplied. No actual partner authorization has been seeded. PostgreSQL migrations, real provider requests, deliverability, operational reconciliation and browser end-to-end testing still require a configured production environment. The current review deployment remains a concept catalog with payments disabled. Native managed browser QA is unavailable in this environment; build success is not visual or provider verification.
 
-Campaigns: `DRAFT → EMBARGO → UPCOMING → LIVE → CLOSED → ARCHIVED`. Drafts may proceed directly to upcoming after review. Purchase permission requires LIVE, approved content, valid authorization and server time. Terminal states are irreversible. A delayed closure job cannot extend a purchase window.
-
-Campaign state and order fulfillment state are separate. Paid-only consolidation groups by SKU **and** variant. MOQ checks never inflate quantities. POs remain PREPARED until human approval and are never submitted automatically in this release.
-
-Callbacks, screenshots and customer redirects are untrusted. The payment endpoint currently returns 503 without changing payment status. Merchant-specific independent verification must be implemented and tested before enabling checkout.
-
-## API map
-
-- `GET/POST /api/customer`: authenticated preferences and order history.
-- `GET/POST /api/admin`: allowlisted drafts, evidence records, state changes and audit.
-- `POST /api/checkout`: identity and campaign checks, then explicit unavailable response while payment setup is incomplete.
-- `POST /api/payments/callback`: fails closed and never marks paid.
-- Railway adds `/api/auth/email`, `/api/auth/callback`, `/api/auth/signout`, `/api/health`, `/api/operations`, `/api/jobs/close`.
-
-The closure job requires `Bearer JOB_SECRET`. Configure its Railway schedule after deployment; none is silently created. QPay verification must follow callbacks, not continuous payment polling from cron.
-
-## Verification
-
-Critical tests cover exact opening/closing boundaries, unauthorized and embargoed drops, irreversible closure and delayed jobs. The TypeScript check, both runtime builds and Prisma schema/migration are validated before the implementation commit. These checks do not perform real payment, supplier or email actions. Browser visual and WebMCP validation are unavailable in this environment.
-
-## Volume 02: product experience and Image → 3D Studio
-The redesigned pearl / burgundy interface shares a 360° studio viewer across the homepage, product detail and model studio. Concept geometry is explicitly labeled; it is not an AI reconstruction of the photographs. Approved imported/generated GLBs replace concepts automatically. Original concept photographs are in public/petal-reset.webp and public/blue-hour.webp.
-
-Visit `/studio`. Self-contained GLB 2 models can be previewed locally without sending a file to a provider. Allowlisted administrators can persist GLBs, submit 1–4 PNG/JPEG views to Meshy and review the result. Generation requests use Meshy 7.1, 2K geometry, 4K PBR textures and a 60,000-polygon web target. AI reconstruction requires visual review, particularly labels and transparent packaging; exact unseen geometry cannot be recovered from one photograph.
-
-Sites: set MESHY_API_KEY as a server secret; MEDIA is the durable R2 binding. Railway: configure MESHY_API_KEY and the S3_* variables in railway/.env.example, plus existing ADMIN_EMAILS and authentication. Uploaded source images and generated GLBs are stored in object storage, job metadata in D1/PostgreSQL. Nothing is generated when the API key is absent. The provider may bill after accepting a job; failed/ambiguous submissions are not automatically retried. Check the Meshy dashboard before resubmission. Administrators are capped at 10 recorded studio jobs per rolling day.
-
-Generation progress refreshes while the studio page is open. Durable provider task IDs permit later resumption. This is polling, not a configured background worker. A completed model enters REVIEW. Explicit media-rights and visual-review approval binds it to a drop, records an audit event and makes its file publicly accessible on the site's existing audience. Model approval does not authorize brand partnership, campaign commerce or payment.
-
-Verification: TypeScript, both build targets, 8 boundary/file-validation tests. Live Meshy generation is unverified until credentials are configured.
-
-## Immersive collection update
-The homepage now uses a single lazy-loaded WebGL scene for five floating products, with smooth scroll-driven selection, direct model picking, pointer lighting/camera response, swipe navigation and accessible numbered selectors. Brand, bilingual description, illustrative MNT price and exact UTC+8 deadline change with the selected drop. Mobile uses a natural document flow and swipe/button selection; reduced-motion users receive manual selection without automatic scene movement. Approved GLBs replace the corresponding labeled concept geometry.
-
-Reference research: Agrumea's floating product carousel and oversized editorial product title were inspected in the browser. Ciao Energy's public product content was read, but its interactive scene remained at 99% loading in this browser. None of either brand's product assets, logos or source code were copied. The site's own browser QA was unavailable because the managed preview's required control-browser skill is absent; TypeScript and both runtime builds remain the available verification.
-
-## Single-screen navigation update
-The homepage is now a single product stage. Vertical scrolling no longer changes the selected product. Collection sections, newsletter and footer are omitted only on the homepage; existing drop, brand, account, studio and information routes remain reachable through navigation. Arrow/number controls, product picking and horizontal swiping select drops. Five separate Three.js architectural environments crossfade with selection: glass rings, blue chrome panels, rose arches, gold columns and a pearl gallery. Price, description and deadline remain on the same screen. Smaller screens may retain ordinary overflow where necessary for legibility; there is no scroll-driven product narrative.
+The supplier adapter contracts do not provide automatic binding purchase-order submission. Use the human-approved export and record the actual supplier order until a specific partner's authenticated API and response schema are implemented and tested. Do not call this an official brand partnership or display invented stock, delivery estimates or ingredients.

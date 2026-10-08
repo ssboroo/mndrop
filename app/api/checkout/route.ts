@@ -1,4 +1,7 @@
 import {getChatGPTUser} from '@/app/chatgpt-auth';
 import {validOrigin} from '@/db/raw';
-import {drops,canPurchase} from '@/lib/catalog';
-export async function POST(req:Request){if(!validOrigin(req))return Response.json({error:'Invalid origin'},{status:403});if(!await getChatGPTUser())return Response.json({error:'Sign in required'},{status:401});try{const b=await req.json() as any;if(!Array.isArray(b.items)||!b.items.length||b.items.length>30)return Response.json({error:'Invalid cart'},{status:400});for(const i of b.items){const d=drops.find(d=>d.id===i.drop_id);if(!d||!canPurchase(d)||!d.variants.includes(i.variant)||!Number.isInteger(i.quantity)||i.quantity<1||i.quantity>10)return Response.json({error:'Drop is closed or not authorized for purchase'},{status:409});}return Response.json({error:'Checkout is unavailable until the merchant payment integration is configured and verified.'},{status:503});}catch{return Response.json({error:'Invalid checkout request'},{status:400})}}
+import {reserveCheckout} from '@/lib/checkout-service';
+import {CommerceError} from '@/lib/commerce-types';
+import {paymentReady} from '@/lib/commerce-payments';
+export async function GET(){return Response.json({available:paymentReady()})}
+export async function POST(req:Request){if(!validOrigin(req))return Response.json({error:'Invalid origin'},{status:403});const u=await getChatGPTUser();if(!u)return Response.json({error:'Sign in required'},{status:401});try{return Response.json({order:await reserveCheckout(await req.json(),u)})}catch(e){return Response.json({error:e instanceof CommerceError?e.message:'Checkout temporarily unavailable'},{status:e instanceof CommerceError?e.status:503})}}

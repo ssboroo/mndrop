@@ -10,7 +10,7 @@
     "prepare:source": "node scripts/prepare.mjs",
     "dev": "npm run prepare:source && next dev --hostname 0.0.0.0",
     "build": "npm run prepare:source && prisma generate && next build",
-    "start": "next start --hostname 0.0.0.0 -p ${PORT:-3000}",
+    "start": "node scripts/start.mjs",
     "db:migrate": "prisma migrate deploy",
     "test": "npm run prepare:source && node --experimental-strip-types --test tests/runtime.test.mjs"
   },

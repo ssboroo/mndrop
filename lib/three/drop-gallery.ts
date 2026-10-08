@@ -2,20 +2,20 @@ import * as T from 'three';
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {createConceptProduct} from './product-scene';
-export function createDropGallery(container:HTMLElement,{count,reduced,onReady,onError,onSelect,onOpen}:{count:number;reduced:boolean;onReady:()=>void;onError:()=>void;onSelect:(i:number)=>void;onOpen:()=>void}){
+export function createDropGallery(container:HTMLElement,{count,worlds,reduced,onReady,onError,onSelect,onOpen}:{count:number;worlds?:number[];reduced:boolean;onReady:()=>void;onError:()=>void;onSelect:(i:number)=>void;onOpen:()=>void}){
  const renderer=new T.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<700?1.3:1.7));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;container.appendChild(renderer.domElement);
  const scene=new T.Scene(),camera=new T.PerspectiveCamera(32,1,.1,70);camera.position.set(0,.6,11);camera.lookAt(0,.1,0);
  const pmrem=new T.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.035);scene.environment=environment.texture;room.dispose();pmrem.dispose();scene.add(new T.HemisphereLight('#fffaf5','#73314b',2.4));const key=new T.DirectionalLight('#ffffff',4);key.position.set(3,5,5);scene.add(key);const fill=new T.DirectionalLight('#ffe2ea',2.6);fill.position.set(-5,2,-2);scene.add(fill);
- const objects:T.Group[]=[];for(let i=0;i<count;i++){const slot=new T.Group();slot.add(createConceptProduct(i));slot.userData.index=i;objects.push(slot);scene.add(slot)}
+ const objects:T.Group[]=[];for(let i=0;i<count;i++){const slot=new T.Group();slot.add(createConceptProduct(i%5));slot.userData.index=i;objects.push(slot);scene.add(slot)}
  const environments:T.Group[]=[];
  const tones=['#b5788f','#6492a9','#985877','#b99b64','#aaa1ad'];
  for(let i=0;i<count;i++){
-  const room=new T.Group();const metal=new T.MeshStandardMaterial({color:tones[i],metalness:.68,roughness:.26});const pearl=new T.MeshPhysicalMaterial({color:tones[i],metalness:.18,roughness:.12,transmission:.4,thickness:.7,clearcoat:1});
+  const kind=worlds?.[i]??i%5;const room=new T.Group();const metal=new T.MeshStandardMaterial({color:tones[kind],metalness:.68,roughness:.26});const pearl=new T.MeshPhysicalMaterial({color:tones[kind],metalness:.18,roughness:.12,transmission:.4,thickness:.7,clearcoat:1});
   const add=(g:T.BufferGeometry,m:T.Material,x:number,y:number,z:number)=>{const o=new T.Mesh(g,m);o.position.set(x,y,z);room.add(o);return o};
-  if(i===0){for(let j=0;j<3;j++){const ring=add(new T.TorusGeometry(3.2+j*.55,.09,12,100),j===1?metal:pearl,0,-.2,-7-j*.8);ring.scale.set(1,1.18,1);ring.rotation.y=.18-j*.12;ring.rotation.z=.18}}
-  else if(i===1){for(let j=-3;j<=3;j++){const panel=add(new T.BoxGeometry(.11,8,2),j%2===0?metal:pearl,j*1.45,.4,-7-Math.abs(j)*.35);panel.rotation.y=-.35}add(new T.CylinderGeometry(7,7,.1,80),metal,0,-2.9,-8)}
-  else if(i===2){for(let j=0;j<4;j++){const arc=add(new T.TorusGeometry(2.4+j*.8,.16,16,100,Math.PI*1.5),j%2?metal:pearl,0,.4,-7-j*.4);arc.rotation.z=-Math.PI*.25}}
-  else if(i===3){for(let j=-2;j<=2;j++){add(new T.CylinderGeometry(.45,.45,6.5+Math.abs(j),48),metal,j*2.2,.3,-8);add(new T.CylinderGeometry(.6,.6,.16,48),pearl,j*2.2,3.55+Math.abs(j)*.5,-8)}add(new T.TorusGeometry(4,.055,10,100),metal,0,.8,-9)}
+  if(kind===0){for(let j=0;j<3;j++){const ring=add(new T.TorusGeometry(3.2+j*.55,.09,12,100),j===1?metal:pearl,0,-.2,-7-j*.8);ring.scale.set(1,1.18,1);ring.rotation.y=.18-j*.12;ring.rotation.z=.18}}
+  else if(kind===1){for(let j=-3;j<=3;j++){const panel=add(new T.BoxGeometry(.11,8,2),j%2===0?metal:pearl,j*1.45,.4,-7-Math.abs(j)*.35);panel.rotation.y=-.35}add(new T.CylinderGeometry(7,7,.1,80),metal,0,-2.9,-8)}
+  else if(kind===2){for(let j=0;j<4;j++){const arc=add(new T.TorusGeometry(2.4+j*.8,.16,16,100,Math.PI*1.5),j%2?metal:pearl,0,.4,-7-j*.4);arc.rotation.z=-Math.PI*.25}}
+  else if(kind===3){for(let j=-2;j<=2;j++){add(new T.CylinderGeometry(.45,.45,6.5+Math.abs(j),48),metal,j*2.2,.3,-8);add(new T.CylinderGeometry(.6,.6,.16,48),pearl,j*2.2,3.55+Math.abs(j)*.5,-8)}add(new T.TorusGeometry(4,.055,10,100),metal,0,.8,-9)}
   else{for(let j=0;j<3;j++){const frame=add(new T.TorusGeometry(3.5-j*.55,.13,12,4),j===1?metal:pearl,0,.3,-8-j);frame.rotation.z=Math.PI/4;frame.rotation.y=.22}const orb=add(new T.SphereGeometry(1.1,48,32),pearl,-4.4,2.3,-8);orb.scale.set(1,1.2,1)}
   const mats=new Set<T.Material>();room.traverse(o=>{if(o instanceof T.Mesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{m.transparent=true;m.depthWrite=false;mats.add(m)})});room.userData.materials=[...mats];room.userData.alpha=i===0?1:0;environments.push(room);scene.add(room);
  }
