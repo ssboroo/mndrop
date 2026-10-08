@@ -92,3 +92,8 @@ Sites: set MESHY_API_KEY as a server secret; MEDIA is the durable R2 binding. Ra
 Generation progress refreshes while the studio page is open. Durable provider task IDs permit later resumption. This is polling, not a configured background worker. A completed model enters REVIEW. Explicit media-rights and visual-review approval binds it to a drop, records an audit event and makes its file publicly accessible on the site's existing audience. Model approval does not authorize brand partnership, campaign commerce or payment.
 
 Verification: TypeScript, both build targets, 8 boundary/file-validation tests. Live Meshy generation is unverified until credentials are configured.
+
+## Immersive collection update
+The homepage now uses a single lazy-loaded WebGL scene for five floating products, with smooth scroll-driven selection, direct model picking, pointer lighting/camera response, swipe navigation and accessible numbered selectors. Brand, bilingual description, illustrative MNT price and exact UTC+8 deadline change with the selected drop. Mobile uses a natural document flow and swipe/button selection; reduced-motion users receive manual selection without automatic scene movement. Approved GLBs replace the corresponding labeled concept geometry.
+
+Reference research: Agrumea's floating product carousel and oversized editorial product title were inspected in the browser. Ciao Energy's public product content was read, but its interactive scene remained at 99% loading in this browser. None of either brand's product assets, logos or source code were copied. The site's own browser QA was unavailable because the managed preview's required control-browser skill is absent; TypeScript and both runtime builds remain the available verification.
