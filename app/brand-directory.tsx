@@ -1,13 +1,14 @@
 'use client';
 import {useMemo, useState, useSyncExternalStore} from 'react';
-import {ArrowUpRight, Search, X} from 'lucide-react';
+import {ArrowUpRight, Pause, Play, Search, X} from 'lucide-react';
 import Link from './site-link';
 import {directoryBrands, brandCategories, type DirectoryBrand} from '@/lib/brand-directory';
 import {BrandBackdrop, brandStyle} from './brand-theme';
 
 export function BrandMark({brand, eager = false}: {brand: DirectoryBrand; eager?: boolean}) {
   const [failedSource, setFailedSource] = useState<string>();
-  return brand.logo && failedSource !== brand.logo
+  // Tiny navigation symbols cannot serve as readable, enlarged wordmarks.
+  return brand.logo && !brand.logoSymbol && failedSource !== brand.logo
     // Local wordmarks preserve their supplied geometry across both rendering runtimes.
     // eslint-disable-next-line @next/next/no-img-element
     ? <img className={'directory-logo ' + (brand.logoOpaque ? 'opaque-logo' : '')} src={brand.logo} alt={brand.name} loading={eager ? 'eager' : 'lazy'} decoding="async" onError={() => setFailedSource(brand.logo)} />
@@ -16,10 +17,12 @@ export function BrandMark({brand, eager = false}: {brand: DirectoryBrand; eager?
 
 export function BrandRibbon({mn}: {mn: boolean}) {
   const count = directoryBrands.length;
+  const [paused, setPaused] = useState(false);
   return <aside className="brand-ribbon" aria-label={mn ? 'Брэндийн лавлах' : 'Brand directory'}>
     <Link href="/brands" className="ribbon-label"><span>THE BRAND EDIT</span><small>{count} {mn ? 'брэнд · Лавлах' : 'brands · Directory'}</small><ArrowUpRight size={15} /></Link>
-    <div className="ribbon-window"><div className="ribbon-track">{[0, 1].map(copy => <div className="ribbon-group" key={copy} aria-hidden={copy === 1}>
-      {directoryBrands.map(brand => <Link key={brand.id} href={'/brands/' + brand.id} tabIndex={copy === 1 ? -1 : 0} aria-label={brand.name} title={brand.name}><BrandMark brand={brand} /></Link>)}
+    <button type="button" className="ribbon-motion" aria-pressed={paused} aria-label={mn ? (paused ? 'Брэндийн хөдөлгөөнийг үргэлжлүүлэх' : 'Брэндийн хөдөлгөөнийг зогсоох') : (paused ? 'Resume brand animation' : 'Pause brand animation')} onClick={() => setPaused(value => !value)}>{paused ? <Play size={14} /> : <Pause size={14} />}</button>
+    <div className="ribbon-window" aria-hidden="true"><div className={'ribbon-track' + (paused ? ' is-paused' : '')}>{[0, 1].map(copy => <div className="ribbon-group" key={copy} aria-hidden={copy === 1}>
+      {directoryBrands.map(brand => <Link key={brand.id} href={'/brands/' + brand.id} tabIndex={-1} aria-label={brand.name} title={brand.name}><BrandMark brand={brand} /></Link>)}
     </div>)}</div></div>
   </aside>;
 }
@@ -32,8 +35,14 @@ function categorySnapshot() { return new URLSearchParams(window.location.search)
 
 export default function BrandDirectory({mn}: {mn: boolean}) {
   const sourceCategory = useSyncExternalStore(subscribeCategory, categorySnapshot, () => 'all');
-  const [selection, setCategory] = useState<string | null>(null);
-  const category = selection ?? (brandCategories.some(value => value.id === sourceCategory) ? sourceCategory : 'all');
+  const category = brandCategories.some(value => value.id === sourceCategory) ? sourceCategory : 'all';
+  function setCategory(value: string) {
+    const url = new URL(window.location.href);
+    if (value === 'all') url.searchParams.delete('category');
+    else url.searchParams.set('category', value);
+    window.history.replaceState(window.history.state, '', url);
+    window.dispatchEvent(new Event('popstate'));
+  }
   const [query, setQuery] = useState('');
   const [letter, setLetter] = useState('all');
   const [limit, setLimit] = useState(30);
@@ -53,7 +62,7 @@ export default function BrandDirectory({mn}: {mn: boolean}) {
       <button className={category === 'all' ? 'active' : ''} aria-pressed={category === 'all'} onClick={() => {setCategory('all'); setLimit(30);}}>{t('Бүгд', 'All brands')}<small>{directoryBrands.length}</small></button>
       {brandCategories.map(value => <button key={value.id} className={category === value.id ? 'active' : ''} aria-pressed={category === value.id} onClick={() => {setCategory(value.id); setLimit(30);}}>{mn ? value.mn : value.en}<small>{directoryBrands.filter(brand => brand.categories.includes(value.id)).length}</small></button>)}
     </div><label className="directory-search"><Search size={17} /><input value={query} onChange={event => {setQuery(event.target.value); setLimit(30);}} placeholder={t('Брэнд хайх…', 'Search brands…')} aria-label={t('Брэнд хайх', 'Search brands')} />{query && <button onClick={() => setQuery('')} aria-label={t('Хайлтыг цэвэрлэх', 'Clear search')}><X size={16} /></button>}</label></div>
-    <div className="directory-alphabet"><button className={letter === 'all' ? 'active' : ''} onClick={() => {setLetter('all'); setLimit(30);}} aria-pressed={letter === 'all'}>ALL</button>
+    <div className="directory-alphabet"><button className={letter === 'all' ? 'active' : ''} onClick={() => {setLetter('all'); setLimit(30);}} aria-pressed={letter === 'all'}>{t('БҮГД', 'ALL')}</button>
       {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(value => <button key={value} disabled={!directoryBrands.some(brand => brand.name.charAt(0).toUpperCase() === value)} aria-pressed={letter === value} className={letter === value ? 'active' : ''} onClick={() => {setLetter(value); setLimit(30);}}>{value}</button>)}
     </div>
     <div className="directory-results" aria-live="polite"><span>{String(filtered.length).padStart(2, '0')} {t('БРЭНД', 'BRANDS')}</span><span>{t('ӨӨРИЙН ӨНГӨ · ӨӨРИЙН ЕРТӨНЦ', 'INDIVIDUAL COLOURS · INDIVIDUAL WORLDS')}</span></div>

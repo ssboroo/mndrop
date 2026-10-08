@@ -12,7 +12,7 @@
     "build": "npm run prepare:source && prisma generate && next build",
     "start": "node scripts/start.mjs",
     "db:migrate": "prisma migrate deploy",
-    "test": "npm run prepare:source && node --experimental-strip-types --test tests/runtime.test.mjs"
+    "test": "npm run prepare:source && node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1147.0",
@@ -23,7 +23,7 @@
     "clsx": "2.1.1",
     "lucide-react": "^1.31.0",
     "motion": "^13.4.6",
-    "next": "16.3.4",
+    "next": "16.3.8",
     "radix-ui": "^1.6.7",
     "react": "19.2.6",
     "react-dom": "19.2.6",
@@ -41,5 +41,9 @@
     "@types/three": "^0.186.0",
     "prisma": "6.19.0",
     "typescript": "5.9.3"
+  },
+  "overrides": {
+    "effect": "3.20.0",
+    "deepmerge-ts": "8.0.0"
   }
 }
