@@ -1,6 +1,6 @@
 # BEAUTY DROP Mongolia
 
-A bilingual luxury editorial beauty platform inspired by the supplied **01 / DROP//OS** reference. Original blush-glass campaign photography, restrained black/pink typography, cinematic homepage, responsive drop catalog and detail pages, upcoming calendar, wishlist, search, accounts, journal, permanent archive, support/policies and a protected operations studio.
+A bilingual luxury editorial beauty platform inspired by the supplied **01 / DROP//OS** reference. Original blush-glass campaign photography, restrained black/pink typography, scroll-driven WebGL 3D product stage inspired by Agrumea, cinematic homepage, responsive drop catalog and detail pages, upcoming calendar, wishlist, search, accounts, journal, permanent archive, support/policies and a protected operations studio.
 
 ## Current release
 
@@ -8,6 +8,7 @@ This is an implemented **commerce foundation and editorial preview**, not a fini
 
 ### Implemented
 
+- Real Three.js floating-product carousel, scroll-driven depth and rotation, pointer parallax, keyboard/touch-friendly selection, reduced motion, lazy loading, offscreen render suspension and an image fallback. The original procedural bottle models are editorial concepts, not scanned brand products.
 - Mongolian/English interface and MNT pricing; responsive desktop/mobile layouts and reduced-motion support.
 - Server-side purchase time gates in UTC+08:00. CLOSED and ARCHIVED cannot reopen.
 - Persistent user-scoped wishlists and notification **preferences**; delivered notifications are not claimed.
