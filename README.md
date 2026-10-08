@@ -73,3 +73,11 @@ The current managed preview cannot be reached for browser interaction testing. T
 ### Independent brand directory
 
 The 90 requested beauty houses appear in a bilingual, searchable directory with six category filters, alphabet filtering, individual editorial profiles and a homepage logo ribbon. The directory is informational: it grants no partner authorization and creates no product inventory, pricing or campaign schedules. Brand logos were collected from the respective websites and visually checked; source attribution is retained in `public/brand-logos/sources.json`. Brands without a verified logo use a plain typographic name. Editorial palettes and original architectural backgrounds are explicitly independent of official brand campaign materials. Only reviewed commerce campaigns can open checkout.
+
+## Website product imports and customer profiles
+
+Operations → Integrations accepts a product URL from a configured brand website. The server allows only its exact HTTPS hostname, validates every redirect, limits response size/time, and extracts Product JSON-LD into an unpublished review record. Images, original currency prices and source theme colours can be previewed. Imports do not grant media rights, partner authorization, MNT pricing, inventory, or campaign publication. Pages without usable structured data or blocking automated access require the manual import inbox. No crawling or bypassing access restrictions is performed.
+
+Customer profiles collect delivery contact information with required privacy consent and independent optional marketing consent. Verified paid orders show confirmed shipment milestones and timestamps; the client refreshes visible order pages every ten seconds. Real supplier/shipping updates still require a trusted operational source.
+
+Live launch remains gated on merchant-approved QPay credentials and reviewed mapping, email provider credentials, approved campaign/brand records, and a running scheduler. Railway includes the protected periodic job worker; Sites requires an external authorized scheduler calling the job endpoint. Website import is independent of these payment credentials.

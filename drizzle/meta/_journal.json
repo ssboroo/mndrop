@@ -29,6 +29,13 @@
       "when": 1791442651287,
       "tag": "0003_mighty_speedball",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791455655646,
+      "tag": "0004_heavy_gorilla_man",
+      "breakpoints": true
     }
   ]
 }

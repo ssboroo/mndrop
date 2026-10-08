@@ -25,3 +25,4 @@ export const commerceSessions=sqliteTable('commerce_sessions',{hash:text('hash')
 export const commerceRate=sqliteTable('commerce_rate',{key:text('key').primaryKey(),count:integer('count').notNull()},t=>[check('email_rate_limit',sql`${t.count} <= 3`)]);
 export const commerceDecisions=sqliteTable('commerce_decisions',{orderId:text('order_id').primaryKey().references(()=>orders.id),state:text('state').notNull(),valid:integer('valid').notNull()},t=>[check('decision_valid',sql`${t.valid} = 1`)]);
 export const commerceContacts=sqliteTable('commerce_contacts',{userId:text('user_id').primaryKey(),email:text('email').notNull()});
+export const customerProfiles=sqliteTable('commerce_profiles',{userId:text('user_id').primaryKey(),data:text('data').notNull(),updatedAt:text('updated_at').notNull()});

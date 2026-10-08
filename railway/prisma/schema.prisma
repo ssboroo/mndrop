@@ -371,3 +371,10 @@ model CommerceVariants {
  @@unique([campaign_id,sku,label])
  @@map("commerce_variants")
 }
+
+model CommerceProfiles {
+ user_id String @id
+ data String
+ updated_at String
+ @@map("commerce_profiles")
+}
