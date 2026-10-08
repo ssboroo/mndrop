@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {canPurchase,effectiveStatus,transition,drops} from '../lib/catalog.ts';
+const open=Date.parse('2026-10-08T00:00:00+08:00'),close=Date.parse('2026-10-12T20:00:00+08:00');
+const campaign={...drops[0],approved:true};
+test('server purchase gate enforces exact opening and closing boundaries',()=>{assert.equal(canPurchase(campaign,open-1),false);assert.equal(canPurchase(campaign,open),true);assert.equal(canPurchase(campaign,close-1),true);assert.equal(canPurchase(campaign,close),false)});
+test('unauthorized campaign cannot be bought even inside valid time window',()=>assert.equal(canPurchase({...campaign,approved:false},open+1),false));
+test('terminal campaign cannot reopen when its schedule is changed',()=>{for(const status of ['CLOSED','ARCHIVED']){const d={...campaign,status,closesAt:'2030-01-01T00:00:00Z'};assert.equal(canPurchase(d,open+1),false);assert.equal(effectiveStatus(d,open+1),status);assert.equal(transition[status].includes('LIVE'),false)}});
+test('upcoming and embargoed campaigns are blocked',()=>{for(const status of ['DRAFT','EMBARGO','UPCOMING'])assert.equal(canPurchase({...campaign,status},open+1),false)});
+test('closing is enforced when scheduled background work is late',()=>assert.equal(effectiveStatus(campaign,close),'CLOSED'));

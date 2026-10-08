@@ -1,0 +1,187 @@
+generator client {
+ provider = "prisma-client-js"
+}
+datasource db {
+ provider = "postgresql"
+ url = env("DATABASE_URL")
+}
+model User {
+ id String @id @default(uuid())
+ email String @unique
+ createdAt DateTime @default(now())
+ sessions Session[]
+}
+model Session {
+ tokenHash String @id
+ userId String
+ expiresAt DateTime
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@index([expiresAt])
+}
+model EmailToken {
+ tokenHash String @id
+ email String
+ expiresAt DateTime
+ @@index([expiresAt])
+}
+model RateLimit {
+ key String @id
+ count Int @default(0)
+ window DateTime
+}
+model CustomerItem {
+ userId String @map("user_id")
+ kind String
+ dropId String @map("drop_id")
+ variant String @default("")
+ quantity Int @default(1)
+ createdAt String @map("created_at")
+ @@id([userId,kind,dropId,variant])
+ @@map("customer_items")
+}
+model Campaign {
+ id String @id @default(uuid())
+ name String
+ brand String
+ status String @default("DRAFT")
+ opensAt String @map("opens_at")
+ closesAt String @map("closes_at")
+ authorizationId String? @map("authorization_id")
+ approvedBy String? @map("approved_by")
+ closedAt String? @map("closed_at")
+ createdBy String @map("created_by")
+ createdAt String @map("created_at")
+ titleMn String?
+ descriptionEn String?
+ descriptionMn String?
+ refundPolicyEn String?
+ refundPolicyMn String?
+ sourcingEn String?
+ sourcingMn String?
+ deliveryEn String?
+ deliveryMn String?
+ mediaUrl String?
+ embargoAt DateTime?
+ contentApprovedAt DateTime?
+ products Product[]
+ orders Order[]
+ purchaseOrders PurchaseOrder[]
+ @@index([status,closesAt])
+ @@map("campaigns")
+}
+model Authorization {
+ id String @id @default(uuid())
+ brand String
+ documentUrl String @map("document_url")
+ validUntil String @map("valid_until")
+ createdBy String @map("created_by")
+ approvedBy String?
+ @@map("authorizations")
+}
+model Product {
+ id String @id @default(uuid())
+ campaignId String
+ sku String
+ name String
+ nameMn String
+ ingredientsEn String
+ ingredientsMn String
+ usageEn String
+ usageMn String
+ campaign Campaign @relation(fields:[campaignId],references:[id])
+ variants Variant[]
+ @@unique([campaignId,sku])
+}
+model Variant {
+ id String @id @default(uuid())
+ productId String
+ code String
+ name String
+ priceMnt Int
+ mapMnt Int
+ allocation Int
+ reserved Int @default(0)
+ paid Int @default(0)
+ maxPerCustomer Int
+ moq Int
+ product Product @relation(fields:[productId],references:[id])
+ lines OrderLine[]
+ @@unique([productId,code])
+}
+model AuditLog {
+ id String @id @default(uuid())
+ actor String
+ action String
+ recordId String @map("record_id")
+ detail String
+ createdAt String @map("created_at")
+ @@index([createdAt])
+ @@map("audit_logs")
+}
+model Order {
+ id String @id @default(uuid())
+ userId String @map("user_id")
+ campaignId String @map("campaign_id")
+ status String @default("PAYMENT_PENDING")
+ totalMnt Int @map("total_mnt")
+ paymentReference String? @unique @map("payment_reference")
+ createdAt String @map("created_at")
+ invoiceId String? @unique
+ paymentId String? @unique
+ expiresAt DateTime?
+ paymentVerifiedAt DateTime?
+ shippingStatus String?
+ trackingNumber String?
+ trackingUrl String?
+ addressJson String?
+ campaign Campaign @relation(fields:[campaignId],references:[id])
+ lines OrderLine[]
+ events OrderEvent[]
+ @@index([userId,createdAt])
+ @@index([status,expiresAt])
+ @@map("orders")
+}
+model OrderLine {
+ id String @id @default(uuid())
+ orderId String @map("order_id")
+ sku String
+ variant String
+ quantity Int
+ unitMnt Int @map("unit_mnt")
+ variantId String?
+ order Order @relation(fields:[orderId],references:[id])
+ variantRecord Variant? @relation(fields:[variantId],references:[id])
+ @@index([orderId])
+ @@map("order_lines")
+}
+model OrderEvent {
+ id String @id @default(uuid())
+ orderId String
+ state String
+ note String
+ createdAt DateTime @default(now())
+ order Order @relation(fields:[orderId],references:[id])
+}
+model PurchaseOrder {
+ id String @id @default(uuid())
+ campaignId String
+ status String @default("PREPARED")
+ quantitiesJson String
+ approvedBy String?
+ approvedAt DateTime?
+ supplierReference String?
+ supplierInvoiceUrl String?
+ campaign Campaign @relation(fields:[campaignId],references:[id])
+ @@index([campaignId])
+}
+model Job {
+ id String @id @default(uuid())
+ kind String
+ payloadJson String
+ status String @default("PENDING")
+ attempts Int @default(0)
+ runAt DateTime @default(now())
+ lockedAt DateTime?
+ lastError String?
+ @@index([status,runAt])
+}

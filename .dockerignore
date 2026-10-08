@@ -1,0 +1,17 @@
+.git
+node_modules
+**/node_modules
+.next
+**/.next
+.sites-runtime
+.wrangler
+dist
+.env*
+**/.env*
+railway/app
+railway/components
+railway/lib
+railway/public
+railway/db
+railway/next-env.d.ts
+*.tsbuildinfo
