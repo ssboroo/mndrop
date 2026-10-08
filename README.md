@@ -60,3 +60,12 @@ TypeScript, both runtime builds, Prisma schema validation, 8 existing campaign/G
 This is not yet a verified live retailer. No merchant, email, AI or supplier credentials have been supplied. No actual partner authorization has been seeded. PostgreSQL migrations, real provider requests, deliverability, operational reconciliation and browser end-to-end testing still require a configured production environment. The current review deployment remains a concept catalog with payments disabled. Native managed browser QA is unavailable in this environment; build success is not visual or provider verification.
 
 The supplier adapter contracts do not provide automatic binding purchase-order submission. Use the human-approved export and record the actual supplier order until a specific partner's authenticated API and response schema are implemented and tested. Do not call this an official brand partnership or display invented stock, delivery estimates or ingredients.
+
+## Visual 3D navigation and release-clock refinement
+Dedicated route pages and native document links now support reliable navigation without retained menus/search/cart overlays. Brand cards open a separate brand collection, with a 3D stage and collection toggle. Account content and product cards keep stable React identity so form typing does not remount inputs and preference changes do not recreate all card viewers.
+
+The gallery starts with an actual loading-progress presentation: module import, first rendered scene, model lookup and approved GLB completion determine the percentage. It reaches 100% only after these tasks finish. Unsupported WebGL falls back to photography; a failed approved GLB is hidden instead of displaying a conceptual substitute as that commercial product.
+
+Drop, upcoming, archive, brand and editorial product surfaces lazy-load native 3D product scenes on intersection. The existing single-screen direction retains brand-specific glass/chrome/rose/gold/pearl architecture and gains soft contact shadows, moving reflection lights and restrained atmospheric particles. Countdown faces animate on actual time changes and use ceiling seconds so the UI does not announce closure one second early. Reduced-motion and photographic fallbacks remain supported.
+
+The current managed preview cannot be reached for browser interaction testing. TypeScript and both runtime production builds are the available interface validation; provider and commerce tests remain unchanged.

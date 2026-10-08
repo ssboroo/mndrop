@@ -1,6 +1,6 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
-import Link from 'next/link';
+import Link from './site-link';
 import {money} from '@/lib/catalog';
 import type {CommerceDrop} from '@/lib/commerce-types';
 const stages=['PRE_ORDER','CONSOLIDATED','BRAND_ORDER','INTERNATIONAL_SHIPPING','MONGOLIA','DELIVERED','ARCHIVED'];
